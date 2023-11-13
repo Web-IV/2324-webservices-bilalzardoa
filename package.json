@@ -1,0 +1,29 @@
+{
+  "dependencies": {
+    "config": "^3.3.9",
+    "koa": "^2.14.2",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "env-cmd": "^10.1.0"
+  },
+  "nodemonConfig": {
+    "signal": "SIGTERM",
+    "ignore": [
+      "node_modules/*",
+      ".vscode/*"
+    ],
+    "delay": "80",
+    "watch": [
+      "config",
+      "src",
+      "index.js"
+    ],
+    "ext": "js,json",
+    "legacyWatch": true,
+    "exec": "node --inspect=0.0.0.0:9001 --trace-warnings index.js"
+  },
+  "scripts": {
+    "start": "env-cmd nodemon"
+  }
+}
