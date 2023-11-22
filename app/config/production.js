@@ -1,6 +1,6 @@
 // config/production.js
 module.exports = {
-  env: process.env.NODE_ENV || 'production',
+  env: 'production',
   log: {
     level: 'info',
     disabled: false,
