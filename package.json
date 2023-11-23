@@ -27,4 +27,7 @@
   "scripts": {
     "start": "env-cmd nodemon"
   }
+  ,
+  "name": "Travel-Planner", 
+  "version": "1.0.0"
 }
