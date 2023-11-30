@@ -1,58 +1,82 @@
 const Koa = require('koa');
+const { initializeLogger, getLogger } = require('../core/logging.js');
+
+const config = require('config');
+
+const NODE_ENV = config.get('env');
+const LOG_LEVEL = config.get('log.level');
+const LOG_DISABLED = config.get('log.disabled');
+
+const koaCors = require('@koa/cors');
+
+const CORS_ORIGINS = config.get('cors.origins');
+const CORS_MAX_AGE = config.get('cors.maxAge');
+
 const app = new Koa();
-const port = process.env.PORT || 9000;
 
 const installRest = require('../rest/index.js');
 const installHealthRoutes = require('../rest/health.js'); // Update the path
 
 const bodyParser = require('koa-bodyparser');
 
-const destinationReviewService = require('../src/service/destinationReviewService.js'); //
-
-app.use(bodyParser());
-
-app.use(async (ctx, next) => {
-  console.log('Request URL:', ctx.url);
-  await next();
-});
-
-app.use(async (ctx, next) => {
-  ctx.body = 'Welcome to the Travel Planner API';
-  await next();
-});
-
-installRest(app);
-installHealthRoutes(app); // Install health endpoints
-
-// logging
-const winston = require('winston');
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.simple(),
-  transports: [new winston.transports.Console()],
-});
-
-app.use(async (ctx, next) => {
-  logger.info(JSON.stringify(ctx.request));
-  logger.info(JSON.stringify(ctx.request.body));
-  if (
-    ctx.request.method === 'GET' &&
-    ctx.request.url === '/api/destinations'
-  ) {
-    ctx.body = destinationReviewService.getAllDestinations();
-  } 
-  else {
-    // For other requests, respond with a generic message
-    ctx.body = 'Goodbye world';
-  }
-  return next();
-});
-/////
+const { initializeData } = require('./data');
 
 
+async function main() {
+  // Initialize logger
+  initializeLogger({
+    level: LOG_LEVEL,
+    disabled: LOG_DISABLED,
+    defaultMeta: {
+      NODE_ENV,
+    },
+  });
 
-app.listen(port, () => {
-  console.log(`Travel Planner API is running on port ${port}`);
-});
+  // Initialize data
+  await initializeData();
 
+  // Configure CORS
+  app.use(
+    koaCors({
+      origin: (ctx) => {
+        if (CORS_ORIGINS.indexOf(ctx.request.header.origin) !== -1) {
+          return ctx.request.header.origin;
+        }
+        // Not a valid domain at this point, let's return the first valid as we should return a string
+        return CORS_ORIGINS[0];
+      },
+      allowHeaders: ['Accept', 'Content-Type', 'Authorization'],
+      maxAge: CORS_MAX_AGE,
+    })
+  );
+
+  // Body parser middleware
+  app.use(bodyParser());
+
+  // Logging middleware
+  app.use(async (ctx, next) => {
+    console.log('Request URL:', ctx.url);
+    await next();
+  });
+
+  // Welcome message middleware
+  app.use(async (ctx, next) => {
+    ctx.body = 'Welcome to Nexus';
+    await next();
+  });
+
+  // Install REST routes and health endpoints
+  installRest(app);
+  installHealthRoutes(app);
+
+  // Start the server
+  app.listen(PORT, () => {
+    getLogger().info(`🚀 Server listening on http://localhost:${PORT}`);
+  });
+}
+
+// Run the main function
+main();
+
+// Export the app (optional, depends on your project structure)
 module.exports = app;

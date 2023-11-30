@@ -1,5 +1,5 @@
 const Router = require('@koa/router');
-const healthService = require('../src/service/health');
+const healthService = require('../service/health');
 
 const ping = async (ctx) => {
   ctx.status = 200;
