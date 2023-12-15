@@ -1,5 +1,5 @@
 const Router = require('@koa/router');
-const NexusRouter = require('./nexusReviewRouter');
+const userRouter = require('./userRouter');
 const installHealthRoutes = require('../rest/health');
 
 /**
@@ -12,7 +12,7 @@ module.exports = (app) => {
     prefix: '/api',
   });
 
-  NexusRouter(router);
+  userRouter(router);
   installHealthRoutes(router); // Install health endpoints
 
   app.use(router.routes())

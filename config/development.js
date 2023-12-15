@@ -11,10 +11,10 @@ module.exports = {
   },
   database: {
     client: 'mysql2',
-    host: 'localhost',
-    port: 3306,
-    name: 'nexus',
-    username: 'bilal',
-    password: 'Nexus2024',
+    host: 'vichogent.be',
+    port: 40043,
+    name: '293826bz',
+    username: '293826bz',
+    password: 'b6lK857HD5ndOdN356Cw',
   },
 };

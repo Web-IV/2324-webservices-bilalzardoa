@@ -1,5 +1,6 @@
 const knex = require('knex'); 
-const { getLogger } = require('../../core/logging'); 
+const { getLogger } = require('../core/logging'); 
+const { join } = require('path');
 
 const config = require('config');
 
@@ -31,6 +32,13 @@ async function initializeData() {
       password: DATABASE_PASSWORD,
       insecureAuth: isDevelopment,
     },
+    migrations: {
+      tableName: 'knex_meta',
+      directory: join('app','src', 'data', 'migrations'),
+    },
+    seeds: {
+          directory: join('app','src', 'data', 'seeds'),
+    },
   };
   
   knexInstance = knex(knexOptions); 
@@ -43,10 +51,44 @@ async function initializeData() {
     throw new Error('Could not initialize the data layer'); 
   }
 
-  logger.info('Successfully initialized connection to the database'); 
+   // Run migrations
+   try {
+    await knexInstance.migrate.latest();
+  } catch (error) {
+    logger.error('Error while migrating the database', {
+      error,
+    });
 
+    // No point in starting the server when migrations failed
+    throw new Error('Migrations failed, check the logs');
+  }
+  if (isDevelopment) {
+    try {
+      await knexInstance.seed.run();
+    } catch (error) {
+      logger.error('Error while seeding database', {
+        error,
+      });
+    }
+
+    logger.info('Successfully initialized connection to the database'); 
+
+  }
   return knexInstance; 
 }
+
+
+async function shutdownData() {
+  const logger = getLogger();
+
+  logger.info('Shutting down database connection');
+
+  await knexInstance.destroy();
+  knexInstance = null;
+
+  logger.info('Database connection closed');
+}
+
 
 function getKnex() {
   if (!knexInstance)
@@ -57,14 +99,14 @@ function getKnex() {
 }
 
 const tables = Object.freeze({
-  user: 'users',
-  friends: 'friends',
-  posts:'posts',
-  messages:'messages'
+  users: 'users',
+  Therapists:'Therapists',
+  journal: 'journal',
 });
 
 module.exports = {
   initializeData, 
   getKnex, 
   tables, 
+  shutdownData,
 };

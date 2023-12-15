@@ -4,5 +4,6 @@ module.exports = {
     level: "debug",
     disabled: false,
   },
-  // other configurations...
-};
+  migrations: {
+    directory: 'app/src/data/migrations', // verify this path
+  },};
