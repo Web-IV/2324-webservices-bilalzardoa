@@ -60,10 +60,10 @@ const config = {
   // forceCoverageMatch: [],
 
   // A path to a module which exports an async function that is triggered once before all test suites
-  // globalSetup: undefined,
+  globalSetup: './__tests__/global.setup.js',
 
   // A path to a module which exports an async function that is triggered once after all test suites
-  // globalTeardown: undefined,
+  globalTeardown: './__tests__/global.teardown.js',
 
   // A set of global variables that need to be available in all test environments
   // globals: {},
@@ -158,6 +158,13 @@ const config = {
     "**/__tests__/**/?(*.)+(spec|test).[jt]s?(x)",
   ],
 
+  collectCoverageFrom: [
+    '.app/src/repository/**/*.js',
+    '.app/src/service/**/*.js',
+    '.app/src/rest/**/*.js',
+  ],
+  coverageDirectory: '__tests__/coverage'
+  
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   // testPathIgnorePatterns: [
   //   "\\\\node_modules\\\\"

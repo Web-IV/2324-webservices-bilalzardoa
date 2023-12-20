@@ -81,6 +81,14 @@ module.exports = function installMiddleware(app) {
           statusCode = 404;
         }
 
+        if (error.isUnauthorized) {
+          statusCode = 401;
+        }
+      
+        if (error.isForbidden) {
+          statusCode = 403;
+        }
+        
         if (error.isValidationFailed) {
           statusCode = 400;
         }
