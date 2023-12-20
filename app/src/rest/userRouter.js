@@ -1,14 +1,16 @@
 const Router = require('@koa/router');
 const userService = require('../service/userService'); // Assuming the correct path to your user repository
 
+const passport = require('../core/auth')
 const validate = require('../core/validation');
 const Joi = require('joi');
-
 // NexusRouter module
 module.exports = function NexusRouter(app) {
   const router = new Router({
-    prefix: '/nexus', // Adjust the prefix as needed
+    prefix: '/user', // Adjust the prefix as needed
   });
+
+const passportJwtMiddleware = passport.authenticate('jwt', { session: false });
 
   //retrieve all users (no validation)
 const getAllUsers = async (ctx) => {
@@ -19,21 +21,6 @@ const getAllUsers = async (ctx) => {
 getAllUsers.validationScheme = null;
 
   
-  //add user function
-  const addUser = async (ctx) => {
-      const user  = ctx.request.body
-      const addedUser= await userService.addUser(user)
-      ctx.status = 200
-      ctx.body = addedUser
-  }
-  addUser.validationScheme = {
-    body: Joi.object({
-      username: Joi.string().min(5).required(),
-      email: Joi.string().email().required(),
-      password: Joi.string().min(8).required(),
-    }),
-  };
-
   const getUserById = async (ctx) => {
       const id = ctx.params.id;
       const user = await userService.getUserById(id);
@@ -48,8 +35,10 @@ getAllUsers.validationScheme = null;
   };
 
   const deleteUserById = async (ctx) => {
+    await passportJwtMiddleware(ctx, async () =>{
     await userService.deleteById(ctx.params.id);
     ctx.status = 204;
+    })
   };
   deleteUserById.validationScheme = {
     params: {
@@ -65,12 +54,12 @@ getAllUsers.validationScheme = null;
   }
 
   const findByEmail = async (ctx) => {
+    await passportJwtMiddleware(ctx, async () =>{
     const email = ctx.params.email
     const user = await userService.findByEmail(email)
     ctx.status = 200
     ctx.body = user
-
-
+    })
   }
   findByEmail.validationScheme = {
     params: {
@@ -89,16 +78,68 @@ getAllUsers.validationScheme = null;
       username: Joi.string().min(5).required(),
     },
   };
-  // Define user routes
-  router.get('/allUsers',validate(getAllUsers.validationScheme), getAllUsers);
-  router.get('/user/:id',validate(getUserById.validationScheme),getUserById)
-  router.get('/users/count',findCount)
-  router.delete('/delete/:id',validate(deleteUserById.validationScheme),deleteUserById)
-  router.get('/user/email/:email',validate(findByEmail.validationScheme),findByEmail)
-  router.get('/user/username/:username', validate(findByUsername.validationScheme), findByUsername);
 
-  router.post('/addUser',validate(addUser.validationScheme),addUser)
- 
+  /**login and registering */
+
+
+  // Register function
+  const register = async (ctx, next) => {
+    const {username , email , password} = ctx.request.body
+    const password_hash = password
+    const token = await userService.register(username,email,password_hash)
+
+    ctx.body = token; 
+    ctx.status = 200;
+  };
+  register.validationScheme = {
+    body: Joi.object({
+      username: Joi.string().min(5).required(),
+      email: Joi.string().email().required(),
+      password: Joi.string().min(8).required(),
+    }),
+  };
+
+  const login = async (ctx, next) => {
+    const { username, password } = ctx.request.body;
+    try {
+      const user = await userService.login(username, password);
+      if (!user) {
+        ctx.status = 401; // Unauthorized
+        ctx.body = { error: 'Invalid credentials' };
+        return;
+      }
+    
+        ctx.status = 200;
+        ctx.body = { user };
+      } catch (tokenError) {
+        console.error('Error generating token:', tokenError);
+        ctx.status = 500; // Internal Server Error
+        ctx.body = { error: 'Token generation failed' };
+      }
+  };
+  
+  // Validation scheme for login endpoint
+login.validationScheme = {
+  body: Joi.object({
+    username: Joi.string().required(),
+    password: Joi.string().required(),
+  }),
+};
+
+  // Define user routes
+  router.get('/users',validate(getAllUsers.validationScheme),passportJwtMiddleware,getAllUsers);
+  router.get('/count', findCount);
+  router.get('/:id',validate(getUserById.validationScheme),passportJwtMiddleware,getUserById);
+  router.get('/email/:email',validate(findByEmail.validationScheme),passportJwtMiddleware,findByEmail);
+  router.get('/username/:username',validate(findByUsername.validationScheme),passportJwtMiddleware ,findByUsername);
+
+  //post routes
+  //login
+  router.post('/login', validate(login.validationScheme), login);
+  router.post('/register', validate(register.validationScheme), register);
+
+  //delete routes
+  router.delete('/delete/:id',validate(deleteUserById.validationScheme),passportJwtMiddleware,deleteUserById)
   // Use the router middleware
   app.use(router.routes()).use(router.allowedMethods());
 };

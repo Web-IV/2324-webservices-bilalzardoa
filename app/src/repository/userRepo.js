@@ -49,33 +49,55 @@ const deleteById = async (id) => {
   }
 };
 
-// Function to add a new user
-const addUser = async (username,email,password) => {
-try{
-    await getKnex()(tables.users).insert({
-      username:username,
-      email:email,
-      password:password
-    })
-    getLogger().info('User added successfully', { username, email });
-    return { success: true};
 
-  }catch(error){
-    getLogger().error('Error in adding user', {
+
+const login = async (username) => {
+  try {
+    const user = await getKnex()(tables.users).where('username', username).first();
+ 
+
+    if (!user) {
+      throw ServiceError.unauthorized('Invalid credentials');
+    }
+
+    return user;
+  } catch (error) {
+    getLogger().error('Error when logging in', {
       error,
     });
     throw error;
   }
-}
- 
+};
+
+const role = require('../core/roles')
+
+const register = async (username,email,hashedPassword) =>{
+  try{
+    await getKnex()(tables.users).insert({
+      username : username,
+      email : email,
+      roles : JSON.stringify([role.USER]),
+      password_hash:hashedPassword,
+    });
+    return "registered succesfully"
+  }catch(error){
+    getLogger().error('Error when registering', {
+      error,
+    });
+    throw error;
+  }
+  }
+
+
 module.exports = {
   getAllusers,
   getUserById,
-  addUser,
   findCount,
   findByEmail,
   deleteById,
-  findByUsername
+  findByUsername,
+  login,
+  register
 };
 
 

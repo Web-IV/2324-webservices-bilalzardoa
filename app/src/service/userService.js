@@ -2,6 +2,8 @@ const userRepo = require('../repository/userRepo');
 const ServiceError = require('../core/serviceError');
 const handleDBError = require('./_handleDBerror');
 
+const { hashPassword, verifyPassword } = require('../core/password');
+const {generateJWT,verifyJWT,} = require('../core/jwt')
 // Function to get all users
 const getAllUsers = async () => {
     const users = await userRepo.getAllusers()
@@ -43,21 +45,43 @@ const deleteById = async (id) => {
   return await userRepo.deleteById(id)
 }
 
-const addUser = async (user) => {
-  try{
-    const {username,email,password} = user
-    return await userRepo.addUser(username,email,password)
-  }catch(error){
-    throw handleDBError(error);
+/***login and registering */
+const login = async (username, password) => {
+  const user = await userRepo.login(username);
+
+  if (!user) {
+    throw ServiceError.unauthorized('Invalid credentials');
   }
-}
+  // Replace with your actual password verification logic
+  const isPasswordValid = await verifyPassword(password, user.password_hash);
+
+  if (!isPasswordValid) {
+    throw ServiceError.unauthorized('Invalid credentials');
+  }
+
+  const token = await generateJWT(user);
+
+  return token;
+};
+
+const register = async (username,email,password) => {
+  // Hash the user's password before saving it to the database
+  const hashedPassword = await hashPassword(password);
+
+  const newUser = await userRepo.register(username,email,hashedPassword);
+
+  const token = await generateJWT(newUser);
+
+  return token;
+};
 
 module.exports = {
   getAllUsers,
-  addUser,
   getUserById,
   findCount,
   findByEmail,
   findByUsername,
-  deleteById
+  deleteById,
+  login,
+  register,
 };

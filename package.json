@@ -1,15 +1,22 @@
 {
   "dependencies": {
-    "@koa/cors": "^4.0.0",
+    "@koa/cors": "^5.0.0",
     "@koa/router": "^12.0.1",
+    "argon": "^2.0.21",
+    "argon2": "^0.31.2",
     "config": "^3.3.9",
     "joi": "^17.11.0",
     "knex": "^3.0.1",
     "koa": "^2.14.2",
     "koa-bodyparser": "^4.4.1",
     "koa-helmet": "^7.0.2",
+    "koa-passport": "^6.0.0",
+    "koa-session": "^6.4.0",
     "mysql2": "^3.6.5",
     "node-emoji": "^2.1.3",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "passport-local": "^1.0.0",
     "winston": "^3.11.0"
   },
   "devDependencies": {

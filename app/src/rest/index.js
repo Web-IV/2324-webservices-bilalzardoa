@@ -1,5 +1,6 @@
 const Router = require('@koa/router');
 const userRouter = require('./userRouter');
+const journalRouter = require('./journalRouter')
 const installHealthRoutes = require('../rest/health');
 
 /**
@@ -13,6 +14,7 @@ module.exports = (app) => {
   });
 
   userRouter(router);
+  journalRouter(router);
   installHealthRoutes(router); // Install health endpoints
 
   app.use(router.routes())

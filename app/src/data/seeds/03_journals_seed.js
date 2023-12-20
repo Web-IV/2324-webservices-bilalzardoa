@@ -19,7 +19,7 @@ module.exports = {
             Content: 'This is a sample journal entry.', 
           },
           {
-            userId : 1,
+            userId : 2,
             Date: '2023-01-02', 
             Content: 'Another sample journal entry.',
           },
