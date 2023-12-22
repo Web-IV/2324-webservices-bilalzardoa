@@ -17,19 +17,21 @@ module.exports = async () => {
   const knex = getKnex(); // 👈 3
 
   // 👇 4
+
+
   await knex(tables.users).insert([
     {
-      id: 1,
-      username: 'Test User',
-      email: 'test.user@hogent.be',
+      id: 20,
+      username: 'amdin200',
+      email: 'admin200@hogent.be',
       password_hash:
         '$argon2id$v=19$m=2048,t=2,p=1$NF6PFLTgSYpDSex0iFeFQQ$Rz5ouoM9q3EH40hrq67BC3Ajsu/ohaHnkKBLunELLzU',
       roles: JSON.stringify([Role.USER]),
     },
     {
-      id: 2,
+      id: 25,
       username: 'Admin User',
-      email: 'admin.user@hogent.be',
+      email: 'admin2100@hogent.be',
       password_hash:
         '$argon2id$v=19$m=2048,t=2,p=1$NF6PFLTgSYpDSex0iFeFQQ$Rz5ouoM9q3EH40hrq67BC3Ajsu/ohaHnkKBLunELLzU',
       roles: JSON.stringify([Role.ADMIN, Role.USER]),
