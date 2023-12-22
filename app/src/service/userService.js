@@ -75,6 +75,17 @@ const register = async (username,email,password) => {
   return token;
 };
 
+const checkRole = (role, roles) => {
+  const hasPermission = roles.includes(role); // 👈 1
+
+  if (!hasPermission) {
+    throw ServiceError.forbidden(
+      'You are not allowed to view this part of the application',
+    ); // 👈 2
+  }
+};
+
+
 module.exports = {
   getAllUsers,
   getUserById,
@@ -84,4 +95,5 @@ module.exports = {
   deleteById,
   login,
   register,
+  checkRole,
 };

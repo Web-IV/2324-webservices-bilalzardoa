@@ -59,9 +59,16 @@ const { getLogger } = require('../core/logging');
         .where({ id: activityIdId })
         .update({
           Content: updatedContent,
-        });
+        })
+        .returning('*'); // Use the 'returning' method to get the updated row
 
-      return updatedRows > 0;
+        if (updatedRows.length > 0) {
+          // Return the updated row if at least one row was updated
+          return updatedRows[0];
+        } else {
+          // No row was updated
+          return null;
+        }
     } catch (error) {
         getLogger.error(`Error in updateActivityEntry: ${error.message}`);
       throw error;
@@ -74,9 +81,17 @@ const { getLogger } = require('../core/logging');
       const knex = getKnex();
       const deletedRows = await knex(tables.activity)
         .where({ id: activityId })
-        .del();
+        .del()
+        .returning('*'); // Use the 'returning' method to get the updated row
 
-      return deletedRows > 0;
+        if (updatedRows.length > 0) {
+          // Return the updated row if at least one row was updated
+          return updatedRows[0];
+        } else {
+          // No row was updated
+          return null;
+        }
+
     } catch (error) {
         getLogger.error(`Error in deleteActivityEntry: ${error.message}`);
       throw error;

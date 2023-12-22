@@ -28,7 +28,7 @@ module.exports = function NexusRouter(app) {
 
   getAllJournalsByUserId.validationScheme = {
     params: {
-      userId: Joi.number().integer().positive(),
+      id: Joi.number().integer().positive(),
       },
   }
   const getJournalById = async (ctx) => {
@@ -36,16 +36,23 @@ module.exports = function NexusRouter(app) {
 
     try {
       const journal = await journalService.getJournalById(journalId);
-      ctx.body = journal;
+      if (ctx.state.user && journal && ctx.state.user.id === journal.userId) {
+        ctx.body = journal;
+      } else {
+        ctx.status = 403; // Forbidden
+        ctx.body = { error: 'Not authorized to access this resource.' };
+      }
     } catch (error) {
       ctx.status = error.statusCode || 500;
       ctx.body = { error: error.message };
     }
-  }
+  };
 
   getJournalById.validationScheme = {
     params: {
       journalId: Joi.number().integer().positive(),
+      id: Joi.number().integer().positive(),
+
       },
   }
  
@@ -68,6 +75,9 @@ module.exports = function NexusRouter(app) {
         date: Joi.date().required(),
         content: Joi.string().required(),
     }),
+    params: {
+      id: Joi.number().integer().positive(),
+}
 }
 
   
@@ -76,17 +86,24 @@ const updateJournalEntry = async (ctx) => {
     const { newContent } = ctx.request.body;
 
     try {
-        const success = await journalService.updateJournalEntry(journalId, newContent);
-        ctx.body = { success };
-    } catch (error) {
+        const journal = await journalService.updateJournalEntry(journalId, newContent);
+        if (ctx.state.user && journal && ctx.state.user.id === journal.userId) {
+          ctx.body = journal;
+        } else {
+          ctx.status = 403; // Forbidden
+          ctx.body = { error: 'Not authorized to access this resource.' };
+        }
+      } catch (error) {
         ctx.status = error.statusCode || 500;
         ctx.body = { error: error.message };
-    }
-}
+      }
+    };
 
 updateJournalEntry.validationScheme = {
   params: {
     journalId: Joi.number().integer().positive().required(),
+    id: Joi.number().integer().positive(),
+
 },
     body: Joi.object({
       newContent: Joi.string().required(),
@@ -96,27 +113,48 @@ const deleteById = async (ctx) => {
     const journalId = ctx.params.journalId;
 
     try {
-      const success = await journalService.deleteJournalEntry(journalId);
-      ctx.body = { success };
+      const journal = await journalService.deleteJournalEntry(journalId);
+      if (ctx.state.user && journal && ctx.state.user.id === journal.userId) {
+        ctx.body = journal;
+      } else {
+        ctx.status = 403; // Forbidden
+        ctx.body = { error: 'Not authorized to access this resource.' };
+      }
     } catch (error) {
       ctx.status = error.statusCode || 500;
       ctx.body = { error: error.message };
     }
-  }
+  };
 
   deleteById.validationScheme = {
     params: {
+      id: Joi.number().integer().positive(),
       journalId: Joi.number().integer().positive(),
       },
   }
+
+  //auth
+  const authorizeUser = async (ctx, next) => {
+    const requestedUserId = ctx.params.id; // Assuming user ID is in the URL parameter
+  
+    if (ctx.state.user && ctx.state.user.id === requestedUserId) {
+      // User is authorized to access the resource
+      await next();
+    } else {
+      // User is not authorized
+      ctx.status = 403; // Forbidden
+      ctx.body = { error: 'Not authorized to access this resource.' };
+    }
+  };
+  
   router.post('/add',validate(addJournalEntry.validationScheme),passportJwtMiddleware,addJournalEntry)
 
-  router.put('/:journalId',validate(updateJournalEntry.validationScheme) ,passportJwtMiddleware,updateJournalEntry)
+  router.put('/user/:id/:journalId',validate(updateJournalEntry.validationScheme) ,passportJwtMiddleware,authorizeUser,updateJournalEntry)
   // Endpoint to delete a journal entry by its ID
-  router.get('/user/:userId',validate(getAllJournalsByUserId.validationScheme),passportJwtMiddleware,getAllJournalsByUserId)
+  router.get('/user/:id',validate(getAllJournalsByUserId.validationScheme),passportJwtMiddleware,authorizeUser,getAllJournalsByUserId)
   // Endpoint to get a journal by its ID
-  router.get('/:journalId' ,validate(getJournalById.validationScheme),passportJwtMiddleware,getJournalById)
-  router.delete('/:journalId', validate(deleteById.validationScheme),passportJwtMiddleware,deleteById);
+  router.get('/user/:id/:journalId' ,validate(getJournalById.validationScheme),passportJwtMiddleware,authorizeUser,getJournalById)
+  router.delete('/user/:id/:journalId', validate(deleteById.validationScheme),passportJwtMiddleware,authorizeUser,deleteById);
 
   app.use(router.routes());
   app.use(router.allowedMethods());

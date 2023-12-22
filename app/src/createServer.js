@@ -1,6 +1,7 @@
 const Koa = require('koa');
 const config = require('config');
 const crypto = require('crypto');  
+const session = require('koa-session'); // Import koa-session
 
 const { initializeLogger, getLogger } = require('./core/logging.js');
 const { initializeData ,shutdownData} = require('./data/index.js');
@@ -31,9 +32,12 @@ module.exports = async function createServer() {
   const app = new Koa();
  
   app.keys = keys;
-  installMiddleware(app);
+  app.use(session(app));
+  // Configure Passport
   app.use(passport.initialize());
+  app.use(passport.session());
 
+  installMiddleware(app);
   installRest(app);
 
   return {

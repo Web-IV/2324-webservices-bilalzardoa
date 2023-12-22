@@ -67,14 +67,21 @@ const { getLogger } = require('../core/logging');
         .where({ id: journalId })
         .update({
           Content: updatedContent,
-        });
+        })
+        .returning('*'); // Use the 'returning' method to get the updated row
 
-      return updatedRows > 0;
-    } catch (error) {
+        if (updatedRows.length > 0) {
+          // Return the updated row if at least one row was updated
+          return updatedRows[0];
+        } else {
+          // No row was updated
+          return null;
+        }
+      } catch (error) {
         getLogger.error(`Error in updateJournalEntry: ${error.message}`);
-      throw error;
-    }
-  }
+        throw error;
+      }
+    };
 
   // Function to delete a journal entry by its ID
   const deleteJournalEntry =  async (journalId) => {
@@ -82,15 +89,21 @@ const { getLogger } = require('../core/logging');
       const knex = getKnex();
       const deletedRows = await knex(tables.journal)
         .where({ id: journalId })
-        .del();
+        .del()
+        .returning('*'); // Use the 'returning' method to get the deleted row
 
-      return deletedRows > 0;
-    } catch (error) {
+        if (deletedRows.length > 0) {
+          // Return the deleted row if at least one row was deleted
+          return deletedRows[0];
+        } else {
+          // No row was deleted
+          return null;
+        }
+      } catch (error) {
         getLogger.error(`Error in deleteJournalEntry: ${error.message}`);
-      throw error;
-    }
-  }
-
+        throw error;
+      }
+    };
 
 module.exports = {
     getAllJournalsByUserId,

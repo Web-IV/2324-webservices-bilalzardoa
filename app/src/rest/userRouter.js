@@ -4,11 +4,14 @@ const userService = require('../service/userService'); // Assuming the correct p
 const passport = require('../core/auth')
 const validate = require('../core/validation');
 const Joi = require('joi');
+const Role = require('../core/roles');
+
 // NexusRouter module
 module.exports = function NexusRouter(app) {
   const router = new Router({
     prefix: '/user', // Adjust the prefix as needed
   });
+
 
 const passportJwtMiddleware = passport.authenticate('jwt', { session: false });
 
@@ -117,7 +120,8 @@ getAllUsers.validationScheme = null;
         ctx.body = { error: 'Token generation failed' };
       }
   };
-  
+ 
+ 
   // Validation scheme for login endpoint
 login.validationScheme = {
   body: Joi.object({
@@ -126,10 +130,33 @@ login.validationScheme = {
   }),
 };
 
+const authorizeUser = async (ctx, next) => {
+  const requestedUserId = ctx.params.id; // Assuming user ID is in the URL parameter
+
+  if (ctx.state.user && ctx.state.user.id === requestedUserId) {
+    // User is authorized to access the resource
+    await next();
+  } else {
+    // User is not authorized
+    ctx.status = 403; // Forbidden
+    ctx.body = { error: 'Not authorized to access this resource.' };
+  }
+};
+
+const requireAdmin = async (ctx,next) => {
+  if (ctx.state.user.roles && ctx.state.user.roles.includes('admin')) {
+    // User is also an admin
+    await next();
+  } else {
+    // User is not an admin
+    ctx.status = 403; // Forbidden
+    ctx.body = { error: 'admin required.' };
+  }
+}
   // Define user routes
-  router.get('/users',validate(getAllUsers.validationScheme),passportJwtMiddleware,getAllUsers);
+  router.get('/users',validate(getAllUsers.validationScheme),passportJwtMiddleware,requireAdmin,getAllUsers);
   router.get('/count', findCount);
-  router.get('/:id',validate(getUserById.validationScheme),passportJwtMiddleware,getUserById);
+  router.get('/:id',validate(getUserById.validationScheme),passportJwtMiddleware,authorizeUser,getUserById);
   router.get('/email/:email',validate(findByEmail.validationScheme),passportJwtMiddleware,findByEmail);
   router.get('/username/:username',validate(findByUsername.validationScheme),passportJwtMiddleware ,findByUsername);
 
@@ -139,7 +166,7 @@ login.validationScheme = {
   router.post('/register', validate(register.validationScheme), register);
 
   //delete routes
-  router.delete('/delete/:id',validate(deleteUserById.validationScheme),passportJwtMiddleware,deleteUserById)
+  router.delete('/delete/:id',validate(deleteUserById.validationScheme),passportJwtMiddleware,authorizeUser,deleteUserById)
   // Use the router middleware
   app.use(router.routes()).use(router.allowedMethods());
 };

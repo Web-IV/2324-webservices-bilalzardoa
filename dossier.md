@@ -1,12 +1,8 @@
-# Bilal Zardoa (Studentennummer)
-
-> Duid aan welke vakken je volgt en vermeld voor deze vakken de link naar jouw GitHub repository. In het geval je slechts één vak volgt, verwijder alle inhoud omtrent het andere vak uit dit document.
-> Lees <https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet> om te weten hoe een Markdown-bestand opgemaakt moet worden.
-> Verwijder alle instructies (lijnen die starten met >).
+# Bilal Zardoa (202293826)
 
 - [ ] Web Services:
-  - <GITHUB_REPO_LINK_HIER>
-  - <LINK_ONLINE_VERSIE_HIER>
+  - <https://github.com/Web-IV/2324-webservices-bilalzardoa>
+  - <https://webservices-nexus.onrender.com>
 
 **Logingegevens**
 
@@ -36,21 +32,21 @@ mijn app is een geestelijke gezondheid tracker. De gebruiker logt zijn activitei
 ### journal
 
 - `GET /api/journal/add`: journal entry toevoegen 
-- `PUT /api/journal/:journalId`: journal entry bijwerken
-- `GET /api/journal/user/:userId`: journal entry van een bepaalde gebruiker opvragen met userId
-- `GET /api/journal/:journalId`: journal entry opvragen adhv journalId
+- `PUT /api/journal/user/:id/:journalId`: journal entry bijwerken
+- `GET /api/journal/user/:id`: journal entry van een bepaalde gebruiker opvragen met userId
+- `GET /api/journal/user/:id/:journalId`: journal entry opvragen adhv journalId
 
-- `DELETE /api/journal/:journalId`: journal entry verwijderen 
+- `DELETE /api/journal/user/:id/:journalId`: journal entry verwijderen 
 
 
 ### activity
 
 - `GET /api/activity/add`: activity entry toevoegen 
-- `PUT /api/activity/:activityId`: activity entry bijwerken
-- `GET /api/activity/user/:userId`: activity entry van een bepaalde gebruiker opvragen met userId
-- `GET /api/activity/:activityId`: activity entry opvragen adhv journalId
+- `PUT /api/activity/user/:id/:activityId`: activity entry bijwerken
+- `GET /api/activity/user/:id`: activity entry van een bepaalde gebruiker opvragen met userId
+- `GET /api/activity/user/:id/:activityId`: activity entry opvragen adhv journalId
 
-- `DELETE /api/activity/:activityId`: activity entry verwijderen 
+- `DELETE /api/activity/user/:id/:activityId`: activity entry verwijderen 
 
 
 ## Behaalde minimumvereisten
@@ -120,9 +116,26 @@ link naar de npm package =>  https://www.npmjs.com/package/passport
 
 > Schrijf hier een korte oplijsting en beschrijving van de geschreven testen + voeg een screenshot van de coverage en uitvoering toe
 
+
+# activity.spec
+In de gegeven code worden Jest-testgevallen geïmplementeerd met behulp van Supertest om HTTP-verzoeken in een Node.js-toepassing te testen. Deze tests dekken verschillende functionaliteiten met betrekking tot gebruikersactiviteiten, zoals het toevoegen, bijwerken, ophalen en verwijderen van activiteitsvermeldingen. De testgevallen omvatten ook scenario's om de behandeling van ongeldige of ontbrekende gegevens te verifiëren bij interactie met de `/api/activity` eindpunten, waarmee de robuustheid van de activiteitsgerelateerde functionaliteiten van de applicatie wordt gegarandeerd.
+
+# journal.spec
+In de verstrekte code worden Jest-testgevallen geïmplementeerd met behulp van Supertest voor het testen van HTTP-verzoeken in een Node.js-toepassing. Deze tests behandelen verschillende functionaliteiten met betrekking tot journaalvermeldingen, zoals het toevoegen, bijwerken, ophalen en verwijderen van journaalvermeldingen. De testgevallen omvatten ook scenario's om de behandeling van ongeldige of ontbrekende gegevens te verifiëren bij interactie met de `/api/journal` eindpunten, waarmee de robuustheid van de journaalgerelateerde functionaliteiten van de applicatie wordt gegarandeerd.
+
+# users.spec
+In de verstrekte code worden Jest-testgevallen geïmplementeerd met behulp van Supertest voor het testen van HTTP-verzoeken in een Node.js-toepassing. Deze tests richten zich op verschillende functionaliteiten met betrekking tot gebruikers, zoals het ophalen van alle gebruikers, het ophalen van een gebruiker op basis van ID, het verkrijgen van het aantal gebruikers, het ophalen van een gebruiker op basis van e-mail en het ophalen van een gebruiker op basis van gebruikersnaam. De testgevallen omvatten ook scenario's om de robuustheid van de gebruikersgerelateerde functionaliteiten te waarborgen, inclusief het gebruik van autorisatietokens voor toegangscontrole.
+
+# health.spec
+In de verstrekte code worden Jest-testgevallen geïmplementeerd met behulp van Supertest voor het testen van de gezondheid van een server. Het testgeval richt zich specifiek op een GET-verzoek naar de endpoint `/api/health/ping` en controleert of het verwachte resultaat 'pong' is.
+
+
+![testen screenshot ](testen.png)
+
 ## Gekende bugs
 
 ### Web Services
 
 > Zijn er gekende bugs?
 
+Nee

@@ -1,27 +1,42 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/snPWRHYg)
-# Examenopdracht Front-end Web Development / Web Services
+# Examenopdracht Web Services
 
 > Schrap hierboven wat niet past
 
-- Student: VOORNAAM NAAM
-- Studentennummer: xxxxxxxxx
-- E-mailadres: <mailto:voornaam.naam@student.hogent.be>
+- Student: Bilal zardoa
+- Studentennummer: 202293826
+- E-mailadres: <mailto:bilal.zardoa@student.hogent.be>
 
 ## Vereisten
 
 Ik verwacht dat volgende software reeds geïnstalleerd is:
 
 - [NodeJS](https://nodejs.org)
-- [Yarn](https://yarnpkg.com)
+- [NPM](https://www.npmjs.com/package)
 - [MySQL Community Server](https://dev.mysql.com/downloads/mysql/)
-- ...
+- [MySQL v8 (no Oracle account needed, click the tiny link below the grey box)](https://dev.mysql.com/downloads/mysql/)
+  
+- [MySQL Workbench (no Oracle account needed, click the tiny link below the grey box)](https://dev.mysql.com/downloads/workbench/)
 
-> Vul eventueel aan
 
-## Opstarten
+## Before starting/testing this project
 
-> Schrijf hier hoe we de applicatie starten (.env bestanden aanmaken, commando's om uit te voeren...)
+Create a `.env` (development) file with the following template.
 
-## Testen
+```ini
+NODE_ENV=development
+DATABASE_USERNAME=admin
+DATABASE_PASSWORD=admin12345
+```
 
-> Schrijf hier hoe we de testen uitvoeren (.env bestanden aanmaken, commando's om uit te voeren...)
+## Start this project
+
+- Install all dependencies: `npm install`
+- Make sure a `.env` exists (see above)
+- Start the development server: `npm start`
+
+## Test this project
+
+- Install all dependencies: `npm install`
+- Make sure a `.env.test` exists with `NODE_ENV=test` (see above)
+- Start the development server: `npm test`

@@ -88,7 +88,8 @@ const register = async (username,email,hashedPassword) =>{
   }
   }
 
-
+ 
+  
 module.exports = {
   getAllusers,
   getUserById,
@@ -97,7 +98,7 @@ module.exports = {
   deleteById,
   findByUsername,
   login,
-  register
+  register,
 };
 
 
