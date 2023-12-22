@@ -100,7 +100,7 @@ function getKnex() {
 
 const tables = Object.freeze({
   users: 'users',
-  Therapists:'Therapists',
+  activity:'activity',
   journal: 'journal',
 });
 

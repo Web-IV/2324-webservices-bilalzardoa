@@ -18,13 +18,17 @@ const config = {
   // clearMocks: false,
 
   // Indicates whether the coverage information should be collected while executing the test
-  // collectCoverage: false,
+  collectCoverage: true,
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
-  // collectCoverageFrom: undefined,
+  collectCoverageFrom: [
+    './app/src/repository/**/*.js',
+    './app/src/service/**/*.js',
+    './app/src/rest/**/*.js',
+  ],
 
   // The directory where Jest should output its coverage files
-  // coverageDirectory: undefined,
+  coverageDirectory: '__tests__/coverage',
 
   // An array of regexp pattern strings used to skip coverage collection
   // coveragePathIgnorePatterns: [
@@ -158,13 +162,7 @@ const config = {
     "**/__tests__/**/?(*.)+(spec|test).[jt]s?(x)",
   ],
 
-  collectCoverageFrom: [
-    '.app/src/repository/**/*.js',
-    '.app/src/service/**/*.js',
-    '.app/src/rest/**/*.js',
-  ],
-  coverageDirectory: '__tests__/coverage'
-  
+ 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   // testPathIgnorePatterns: [
   //   "\\\\node_modules\\\\"

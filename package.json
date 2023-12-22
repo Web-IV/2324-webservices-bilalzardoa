@@ -46,6 +46,15 @@
     "test": "env-cmd -f .env.test jest --runInBand",
     "test:coverage": "env-cmd -f .env.test jest --runInBand --coverage"
   },
+  
+    "engines": {
+      "npm": ">=9.8.0",
+      "node": ">=18.17.1",
+      "yarn": ">=1.22.0"
+    }
+    
+  ,
+  
   "name": "Nexus",
   "version": "1.0.0"
 }

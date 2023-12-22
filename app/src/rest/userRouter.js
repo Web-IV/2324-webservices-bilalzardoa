@@ -102,15 +102,15 @@ getAllUsers.validationScheme = null;
   const login = async (ctx, next) => {
     const { username, password } = ctx.request.body;
     try {
-      const user = await userService.login(username, password);
-      if (!user) {
+      const token = await userService.login(username, password);
+      if (!token) {
         ctx.status = 401; // Unauthorized
         ctx.body = { error: 'Invalid credentials' };
         return;
       }
     
         ctx.status = 200;
-        ctx.body = { user };
+        ctx.body = {token};
       } catch (tokenError) {
         console.error('Error generating token:', tokenError);
         ctx.status = 500; // Internal Server Error

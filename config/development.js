@@ -31,4 +31,5 @@ auth: {
       audience: 'nexus',
     },
   },
+  port : 9000,
 };

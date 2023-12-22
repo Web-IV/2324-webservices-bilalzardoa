@@ -1,6 +1,5 @@
 const Koa = require('koa');
 const config = require('config');
-const session = require('koa-session');
 const crypto = require('crypto');  
 
 const { initializeLogger, getLogger } = require('./core/logging.js');
@@ -44,13 +43,13 @@ module.exports = async function createServer() {
 
     start() {
       return new Promise((resolve) => {
-        app.listen(9000, () => {
-          getLogger().info('🚀 Server listening on http://localhost:9000');
-          resolve();
-        });
+        const port = config.get('port'); // 👈
+        app.listen(port); // 👈
+        getLogger().info(`🚀 Server listening on http://localhost:${port}`); // 👈
+        resolve();
       });
     },
-
+  
     async stop() {
       app.removeAllListeners();
       await shutdownData();
