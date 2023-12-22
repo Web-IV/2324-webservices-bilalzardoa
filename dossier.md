@@ -11,7 +11,8 @@
 
 ## Projectbeschrijving
 
-mijn app is een geestelijke gezondheid tracker. De gebruiker logt zijn activiteiten en schrijft in een dagelijks dagboek en met deze gegevens word er advies gegeven op basis van de relatie tussen de activiteit en dagboek (advies nog niet geimplementeerd). EERD => 
+mijn app is een geestelijke gezondheid tracker. De gebruiker logt zijn activiteiten en schrijft in een dagelijks dagboek en met deze gegevens word er advies gegeven op basis van de relatie tussen de activiteit en dagboek (advies nog niet geimplementeerd). EERD =>  ![EERD ](EERD.png)
+
 
 
 ## API calls
@@ -139,3 +140,4 @@ In de verstrekte code worden Jest-testgevallen geïmplementeerd met behulp van S
 > Zijn er gekende bugs?
 
 Nee
+
